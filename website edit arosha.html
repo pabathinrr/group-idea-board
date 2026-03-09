@@ -97,4 +97,73 @@
       <option value="Arosha">Arosha</option>
     </select>
 
-    <input type="text"
+    <input type="text" id="ideaInput" placeholder="Enter your idea here..." />
+    <button onclick="addIdea()">+ Add Idea</button>
+    
+    <ul id="ideaList">
+      <li>
+        <span class="idea-text">Build a study planner</span>
+        <span class="idea-author">– Nimal</span>
+      </li>
+      <li>
+        <span class="idea-text">Start a podcast</span>
+        <span class="idea-author">– Sara</span>
+      </li>
+      <li>
+        <span class="idea-text">Organize a coding workshop</span>
+        <span class="idea-author">– Alex</span>
+      </li>
+      <li>
+        <span class="idea-text">Create a home garden</span>
+        <span class="idea-author">– Arosha</span>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    function addIdea() {
+      const nameSelect = document.getElementById('nameSelect');
+      const ideaInput = document.getElementById('ideaInput');
+      const ideaList = document.getElementById('ideaList');
+
+      const name = nameSelect.value;
+      const idea = ideaInput.value.trim();
+
+      if (!name || !idea) {
+        alert("Please select your name and enter an idea.");
+        return;
+      }
+
+      // Create list item
+      const li = document.createElement('li');
+
+      // Create text span (Securely using textContent)
+      const spanText = document.createElement('span');
+      spanText.className = 'idea-text';
+      spanText.textContent = idea;
+
+      // Create author span
+      const spanAuthor = document.createElement('span');
+      spanAuthor.className = 'idea-author';
+      spanAuthor.textContent = `– ${name}`;
+
+      // Assemble and add to list
+      li.appendChild(spanText);
+      li.appendChild(spanAuthor);
+      ideaList.appendChild(li);
+
+      // Reset input field
+      ideaInput.value = "";
+      ideaInput.focus();
+    }
+
+    // Allow "Enter" key to trigger the button
+    document.getElementById('ideaInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        addIdea();
+      }
+    });
+  </script>
+
+</body>
+</html>
