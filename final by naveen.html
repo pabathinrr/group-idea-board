@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Creative Group Idea Board</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* BACKGROUND */
+
+body{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding:30px;
+
+background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#a18cd1,#fbc2eb);
+background-size:400% 400%;
+animation:gradientMove 12s infinite;
+}
+
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* HEADER */
+
+.header{
+text-align:center;
+color:white;
+margin-bottom:20px;
+}
+
+.header h1{
+font-size:36px;
+}
+
+.header p{
+opacity:0.9;
+}
+
+/* BOARD */
+
+.board{
+background:white;
+width:480px;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* COUNTER */
+
+.counter{
+text-align:center;
+font-weight:bold;
+margin-bottom:15px;
+color:#444;
+}
+
+/* INPUT */
+
+select,input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:14px;
+}
+
+/* BUTTONS */
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+margin-top:6px;
+transition:0.3s;
+}
+
+/* ADD BUTTON */
+
+.add-btn{
+background:linear-gradient(135deg,#36d1dc,#5b86e5);
+color:white;
+}
+
+.add-btn:hover{
+transform:scale(1.03);
+}
+
+/* CLEAR BUTTON */
+
+.clear-btn{
+background:#ff6b6b;
+color:white;
+}
+
+.clear-btn:hover{
+background:#e63946;
+}
+
+/* IDEA LIST */
+
+ul{
+list-style:none;
+margin-top:20px;
+}
+
+li{
+background:#f4f6ff;
+padding:14px;
+margin-bottom:10px;
+border-radius:10px;
+border-left:5px solid #5b86e5;
+
+display:flex;
+flex-direction:column;
+
+animation:fadeIn 0.4s;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+.idea-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.idea-text{
+font-weight:600;
+}
+
+.idea-author{
+font-size:13px;
+color:#666;
+font-style:italic;
+}
+
+.actions{
+margin-top:8px;
+display:flex;
+justify-content:space-between;
+}
+
+.like{
+color:#e63946;
+cursor:pointer;
+}
+
+.delete{
+color:#555;
+cursor:pointer;
+}
+
+/* FOOTER */
+
+.footer{
+margin-top:25px;
+color:white;
+font-size:14px;
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+<h1>💡 Creative Idea Board</h1>
+<p>Share your ideas with the team</p>
+</div>
+
+<!-- BOARD -->
+
+<div class="board">
+
+<div class="counter">
+Total Ideas: <span id="ideaCount">0</span>
+</div>
+
+<select id="nameSelect">
+<option>Arosha</option>
+<option>Pabath</option>
+<option>Amiru</option>
+<option>Naveen</option>
+<option>Kaveesha</option>
+<option>Ruwini</option>
+<option>Tanisha</option>
+<option>Sithumini</option>
+<option>Thiseni</option>
+</select>
+
+<input type="text" id="ideaInput" placeholder="Enter your idea here...">
+
+<button class="add-btn" onclick="addIdea()">+ Add Idea</button>
+
+<button class="clear-btn" onclick="clearInput()">Clear</button>
+
+<ul id="ideaList"></ul>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+© 2026 Creative Idea Board | Made by Naveen
+</div>
+
+<script>
+
+/* ADD IDEA */
+
+function addIdea(){
+
+const name=document.getElementById("nameSelect").value
+const idea=document.getElementById("ideaInput").value.trim()
+const list=document.getElementById("ideaList")
+
+if(idea===""){
+alert("Please enter an idea")
+return
+}
+
+const li=document.createElement("li")
+
+li.innerHTML=`
+
+<div class="idea-row">
+<span class="idea-text">${idea}</span>
+<span class="idea-author">– ${name}</span>
+</div>
+
+<div class="actions">
+
+<span class="like" onclick="likeIdea(this)">❤️ 0</span>
+
+<span class="delete" onclick="deleteIdea(this)">🗑 Delete</span>
+
+</div>
+
+`
+
+list.appendChild(li)
+
+document.getElementById("ideaInput").value=""
+
+updateCounter()
+
+}
+
+/* CLEAR INPUT */
+
+function clearInput(){
+document.getElementById("ideaInput").value=""
+}
+
+/* LIKE BUTTON */
+
+function likeIdea(el){
+
+let number=parseInt(el.innerText.split(" ")[1])
+
+number++
+
+el.innerText="❤️ "+number
+
+}
+
+/* DELETE IDEA */
+
+function deleteIdea(el){
+
+el.parentElement.parentElement.remove()
+
+updateCounter()
+
+}
+
+/* IDEA COUNTER */
+
+function updateCounter(){
+
+let total=document.querySelectorAll("#ideaList li").length
+
+document.getElementById("ideaCount").innerText=total
+
+}
+
+/* ENTER KEY */
+
+document.getElementById("ideaInput").addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+addIdea()
+}
+
+})
+
+</script>
+
+</body>
+</html>
