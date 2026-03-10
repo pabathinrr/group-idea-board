@@ -4,356 +4,63 @@
     <meta charset="UTF-8">
     <title>Study Timer</title>
     <style>
-        /* ... [Copy CSS from above] ... */
-        .timer-display { font-size: 60px; text-align: center; margin: 20px 0; color: #444; font-weight: bold; }
-        .timer-btns { display: flex; gap: 10px; }
+      * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+      body { min-height: 100vh; display: flex; flex-direction: column; background: #f4f5f7; transition: background 0.3s; }
+      body.dark-mode { background: #121212; }
+      .navbar { display: flex; justify-content: space-between; align-items: center; background: #800000; padding: 15px 40px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); transition: background 0.3s; }
+      .navbar.dark-mode { background: #4a0000; }
+      .navbar-brand { display: flex; align-items: center; gap: 15px; }
+      .logo-placeholder { width: 45px; height: 45px; background: #FFD700; color: #800000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; box-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
+      .navbar h2 { color: white; font-size: 20px; }
+      .nav-links { display: flex; gap: 20px; align-items: center; }
+      .nav-links a { text-decoration: none; color: #800000; background: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; transition: 0.3s; }
+      .nav-links a:hover { background: #FFD700; color: #800000; }
+      .navbar.dark-mode .nav-links a { color: #e0e0e0; background: #333; }
+      .navbar.dark-mode .nav-links a:hover { background: #FFD700; color: #800000; }
+      .toggle-checkbox { display: none; }
+      .toggle-label { display: flex; align-items: center; cursor: pointer; background: white; border-radius: 20px; padding: 4px 6px; transition: 0.3s; width: 50px; height: 28px; position: relative; }
+      .toggle-label::after { content: '☀️'; position: absolute; left: 6px; font-size: 16px; transition: 0.3s; }
+      .toggle-checkbox:checked + .toggle-label { background: #333; }
+      .toggle-checkbox:checked + .toggle-label::after { content: '🌙'; left: 24px; }
+      .layout-container { display: flex; flex: 1; padding: 30px; gap: 30px; max-width: 1200px; margin: 0 auto; width: 100%; align-items: flex-start; }
+      .sidebar, .main-content { animation: sectionFadeIn 0.8s ease-out forwards; opacity: 0; }
+      @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .sidebar { background: white; width: 250px; padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); transition: background 0.3s, color 0.3s; border-top: 4px solid #FFD700; }
+      .dark-mode .sidebar { background: #2a2a2a; color: #e0e0e0; border-top: 4px solid #800000; }
+      .sidebar h3 { color: #800000; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #FFD700; padding-bottom: 8px; transition: color 0.3s; }
+      .dark-mode .sidebar h3 { color: #FFD700; }
+      .event-item { background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 13px; border-left: 4px solid #800000; transition: transform 0.3s, box-shadow 0.3s, background 0.3s, color 0.3s; }
+      .dark-mode .event-item { background: #3a3a3a; border-left: 4px solid #FFD700; color: #e0e0e0; }
+      .event-item:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(255, 215, 0, 0.7); cursor: pointer; }
+      .event-date { font-weight: bold; color: #800000; display: block; margin-bottom: 3px; }
+      .dark-mode .event-date { color: #FFD700; }
+      .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; animation-delay: 0.2s; }
+      .header { text-align: center; color: #333; margin-bottom: 20px; }
+      .dark-mode .header { color: #e0e0e0; }
+      .header h1 { font-size: 36px; color: #800000; }
+      .dark-mode .header h1 { color: #FFD700; }
+      .board { background: white; width: 100%; max-width: 480px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); transition: background 0.3s, color 0.3s; }
+      .dark-mode .board { background: #2a2a2a; color: #e0e0e0; }
       
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-}
+      button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 6px; transition: 0.3s; }
+      .add-btn { background: #800000; color: white; }
+      .add-btn:hover { background: #FFD700; color: #800000; transform: scale(1.03); }
+      .clear-btn { background: white; border: 2px solid #800000; color: #800000; }
+      .clear-btn:hover { background: #f0f0f0; }
+      .dark-mode .clear-btn { border-color:#FFD700; color:#FFD700; background: transparent;}
 
-/* BACKGROUND */
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
-  background-size: 400% 400%;
-  animation: gradientMove 12s infinite;
-  transition: background 0.3s;
-}
-
-body.dark-mode {
-  background: linear-gradient(-45deg, #1a1a1a, #2d2d2d, #1f1f1f, #2a2a2a);
-  background-size: 400% 400%;
-  animation: gradientMove 12s infinite;
-}
-
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* NAVBAR */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  padding: 15px 40px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: background 0.3s;
-}
-
-.navbar.dark-mode {
-  background: rgba(30, 30, 30, 0.5);
-}
-
-.navbar h2 {
-  color: white;
-  font-size: 20px;
-}
-
-.nav-links {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #333;
-  background: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 14px;
-  transition: 0.3s;
-}
-
-.nav-links a:hover {
-  background: #5b86e5;
-  color: white;
-}
-
-.navbar.dark-mode .nav-links a {
-  color: white;
-  background: #333;
-}
-
-.navbar.dark-mode .nav-links a:hover {
-  background: #5b86e5;
-  color: white;
-}
-
-/* DARK MODE TOGGLE */
-.toggle-checkbox {
-  display: none;
-}
-
-.toggle-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  background: white;
-  border-radius: 20px;
-  padding: 4px 6px;
-  transition: 0.3s;
-  width: 50px;
-  height: 28px;
-  position: relative;
-}
-
-.toggle-label::after {
-  content: '☀️';
-  position: absolute;
-  left: 6px;
-  font-size: 16px;
-  transition: 0.3s;
-}
-
-.toggle-checkbox:checked + .toggle-label {
-  background: #333;
-}
-
-.toggle-checkbox:checked + .toggle-label::after {
-  content: '🌙';
-  left: 24px;
-}
-
-/* LAYOUT CONTAINER */
-.layout-container {
-  display: flex;
-  flex: 1;
-  padding: 30px;
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  align-items: flex-start;
-}
-
-/* SIDEBAR */
-.sidebar {
-  background: white;
-  width: 250px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  transition: background 0.3s, color 0.3s;
-}
-
-.dark-mode .sidebar {
-  background: #2a2a2a;
-  color: #e0e0e0;
-}
-
-.sidebar h3 {
-  color: #444;
-  margin-bottom: 15px;
-  font-size: 18px;
-  border-bottom: 2px solid #5b86e5;
-  padding-bottom: 8px;
-  transition: color 0.3s;
-}
-
-.dark-mode .sidebar h3 {
-  color: #e0e0e0;
-}
-
-.event-item {
-  background: #f4f6ff;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  border-left: 4px solid #36d1dc;
-  transition: background 0.3s, color 0.3s;
-}
-
-.dark-mode .event-item {
-  background: #3a3a3a;
-  color: #e0e0e0;
-}
-
-.event-date {
-  font-weight: bold;
-  color: #5b86e5;
-  display: block;
-  margin-bottom: 3px;
-}
-
-/* HEADER (Main Content) */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.header {
-  text-align: center;
-  color: white;
-  margin-bottom: 20px;
-}
-
-.header h1 {
-  font-size: 36px;
-}
-
-.header p {
-  opacity: 0.9;
-}
-
-/* BOARD */
-.board {
-  background: white;
-  width: 100%;
-  max-width: 480px;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s, color 0.3s;
-}
-
-.dark-mode .board {
-  background: #2a2a2a;
-  color: #e0e0e0;
-}
-
-/* COUNTER */
-.counter {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #444;
-  transition: color 0.3s;
-}
-
-.dark-mode .counter {
-  color: #e0e0e0;
-}
-
-/* INPUT */
-select, input {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
-}
-
-.dark-mode select, .dark-mode input {
-  background: #3a3a3a;
-  color: #e0e0e0;
-  border-color: #555;
-}
-
-/* BUTTONS */
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 6px;
-  transition: 0.3s;
-}
-
-.add-btn {
-  background: linear-gradient(135deg, #36d1dc, #5b86e5);
-  color: white;
-}
-
-.add-btn:hover {
-  transform: scale(1.03);
-}
-
-.clear-btn {
-  background: #ff6b6b;
-  color: white;
-}
-
-.clear-btn:hover {
-  background: #e63946;
-}
-
-/* IDEA LIST */
-ul {
-  list-style: none;
-  margin-top: 20px;
-}
-
-li {
-  background: #f4f6ff;
-  padding: 14px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border-left: 5px solid #5b86e5;
-  display: flex;
-  flex-direction: column;
-  animation: fadeIn 0.4s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.idea-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.idea-text {
-  font-weight: 600;
-}
-
-.idea-author {
-  font-size: 13px;
-  color: #666;
-  font-style: italic;
-}
-
-.actions {
-  margin-top: 8px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.like {
-  color: #e63946;
-  cursor: pointer;
-}
-
-.delete {
-  color: #555;
-  cursor: pointer;
-}
-
-/* FOOTER */
-.footer {
-  padding: 20px;
-  color: white;
-  font-size: 14px;
-  text-align: center;
-  width: 100%;
-}
-</style>
-   
+      /* Specific to Timer */
+      .timer-display { font-size: 72px; text-align: center; margin: 20px 0; color: #800000; font-weight: bold; font-family: monospace;}
+      .dark-mode .timer-display { color: #FFD700; }
+      .timer-btns { display: flex; gap: 10px; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
-        <h2>Student Dashboard</h2>
+        <div class="navbar-brand">
+            <div class="logo-placeholder">UCSC</div>
+            <h2>Student Dashboard</h2>
+        </div>
         <div class="nav-links">
             <a href="Day4.html">Idea Board</a>
             <a href="gpacal.html">GPA Calculator</a>
@@ -366,11 +73,12 @@ li {
     <div class="layout-container">
         <aside class="sidebar">
             <h3>Upcoming Events</h3>
-            <div class="event-item"><b>Oct 15</b><br>Hackathon</div>
+            <div class="event-item"><span class="event-date">Oct 15, 2026</span>Hackathon Registration Closes</div>
+            <div class="event-item"><span class="event-date">Oct 20, 2026</span>Midterm Group Project Due</div>
         </aside>
 
         <main class="main-content">
-            <div class="header" style="color:white; margin-bottom:20px;"><h1>⏱️ Pomodoro Timer</h1></div>
+            <div class="header"><h1>⏱️ Pomodoro Timer</h1></div>
             <div class="board">
                 <div class="timer-display" id="display">25:00</div>
                 <div class="timer-btns">
@@ -382,19 +90,16 @@ li {
     </div>
 
     <script>
-        // Dark Mode Toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
         const navbar = document.querySelector('.navbar');
 
-        // Check if dark mode preference is saved
         if (localStorage.getItem('darkMode') === 'enabled') {
             darkModeToggle.checked = true;
             body.classList.add('dark-mode');
             navbar.classList.add('dark-mode');
         }
 
-        // Toggle dark mode on checkbox change
         darkModeToggle.addEventListener('change', function() {
             if (this.checked) {
                 body.classList.add('dark-mode');
@@ -424,7 +129,7 @@ li {
                 updateDisplay();
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    alert("Time's up! Take a break.");
+                    alert("Time's up! Take a break. 🔔");
                 }
             }, 1000);
         }
