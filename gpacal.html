@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creative Group Idea Board</title>
-
-<style>
+    <meta charset="UTF-8">
+    <title>GPA Calculator</title>
+    <style>
+        /* ... [Copy CSS from above] ... */
+        .gpa-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        #gpaResult { font-size: 24px; color: #5b86e5; margin-top: 20px; text-align: center; font-weight: bold; }
+       
 * {
   box-sizing: border-box;
   margin: 0;
@@ -254,133 +256,65 @@ li {
   width: 100%;
 }
 </style>
+   
 </head>
-
 <body>
+    <nav class="navbar">
+        <h2>Student Dashboard</h2>
+        <div class="nav-links">
+            <a href="Day4.html">Idea Board</a>
+            <a href="gpacal.html">GPA Calculator</a>
+            <a href="Pomodoro_timer.html">Study Timer</a>
+        </div>
+    </nav>
 
-<nav class="navbar">
-  <h2>Student Dashboard</h2>
-  <div class="nav-links">
-    <a href="Day4.html">Idea Board</a>
-    <a href="gpacal.html">GPA Calculator</a>
-    <a href="Pomodoro_timer.html">Study Timer</a>
-  </div>
-</nav>
+    <div class="layout-container">
+        <aside class="sidebar">
+            <h3>Upcoming Events</h3>
+            <div class="event-item"><b>Oct 15</b><br>Hackathon</div>
+        </aside>
 
-<div class="layout-container">
-
-  <aside class="sidebar">
-    <h3>Upcoming Events</h3>
-    <div class="event-item">
-      <span class="event-date">Oct 15, 2026</span>
-      Hackathon Registration Closes
-    </div>
-    <div class="event-item">
-      <span class="event-date">Oct 20, 2026</span>
-      Midterm Group Project Due
-    </div>
-    <div class="event-item">
-      <span class="event-date">Nov 2, 2026</span>
-      Tech Seminar: Cloud Computing
-    </div>
-  </aside>
-
-  <main class="main-content">
-    
-    <div class="header">
-      <h1>💡 Creative Idea Board</h1>
-      <p>Share your ideas with the team</p>
+        <main class="main-content">
+            <div class="header" style="color:white; margin-bottom:20px;"><h1>📊 GPA Calculator</h1></div>
+            <div class="board">
+                <div id="courseInputs">
+                    <div class="gpa-row">
+                        <input type="number" class="credits" placeholder="Credits (e.g. 3)">
+                        <input type="number" class="grade" placeholder="Grade (0-4.0)">
+                    </div>
+                </div>
+                <button class="add-btn" onclick="addRow()">+ Add Course</button>
+                <button class="add-btn" style="background:#5b86e5" onclick="calculateGPA()">Calculate GPA</button>
+                <div id="gpaResult">GPA: --</div>
+            </div>
+        </main>
     </div>
 
-    <div class="board">
-      <div class="counter">
-        Total Ideas: <span id="ideaCount">0</span>
-      </div>
+    <script>
+        function addRow() {
+            const div = document.createElement('div');
+            div.className = 'gpa-row';
+            div.innerHTML = `<input type="number" class="credits" placeholder="Credits"><input type="number" class="grade" placeholder="Grade">`;
+            document.getElementById('courseInputs').appendChild(div);
+        }
 
-      <select id="nameSelect">
-        <option>Arosha</option>
-        <option>Pabath</option>
-        <option>Amiru</option>
-        <option>Naveen</option>
-        <option>Kaveesha</option>
-        <option>Ruwini</option>
-        <option>Tanisha</option>
-        <option>Sithumini</option>
-        <option>Thiseni</option>
-      </select>
+        function calculateGPA() {
+            const credits = document.querySelectorAll('.credits');
+            const grades = document.querySelectorAll('.grade');
+            let totalPoints = 0;
+            let totalCredits = 0;
 
-      <input type="text" id="ideaInput" placeholder="Enter your idea here...">
-      <button class="add-btn" onclick="addIdea()">+ Add Idea</button>
-      <button class="clear-btn" onclick="clearInput()">Clear</button>
-      <ul id="ideaList"></ul>
-    </div>
-  </main>
-
-</div>
-
-<div class="footer">
-  © 2026 Creative Idea Board | Made by Naveen
-</div>
-
-<script>
-/* ADD IDEA */
-function addIdea(){
-  const name=document.getElementById("nameSelect").value
-  const idea=document.getElementById("ideaInput").value.trim()
-  const list=document.getElementById("ideaList")
-
-  if(idea===""){
-    alert("Please enter an idea")
-    return
-  }
-
-  const li=document.createElement("li")
-  li.innerHTML=`
-  <div class="idea-row">
-    <span class="idea-text">${idea}</span>
-    <span class="idea-author">– ${name}</span>
-  </div>
-  <div class="actions">
-    <span class="like" onclick="likeIdea(this)">❤️ 0</span>
-    <span class="delete" onclick="deleteIdea(this)">🗑 Delete</span>
-  </div>
-  `
-  list.appendChild(li)
-  document.getElementById("ideaInput").value=""
-  updateCounter()
-}
-
-/* CLEAR INPUT */
-function clearInput(){
-  document.getElementById("ideaInput").value=""
-}
-
-/* LIKE BUTTON */
-function likeIdea(el){
-  let number=parseInt(el.innerText.split(" ")[1])
-  number++
-  el.innerText="❤️ "+number
-}
-
-/* DELETE IDEA */
-function deleteIdea(el){
-  el.parentElement.parentElement.remove()
-  updateCounter()
-}
-
-/* IDEA COUNTER */
-function updateCounter(){
-  let total=document.querySelectorAll("#ideaList li").length
-  document.getElementById("ideaCount").innerText=total
-}
-
-/* ENTER KEY */
-document.getElementById("ideaInput").addEventListener("keypress",function(e){
-  if(e.key==="Enter"){
-    addIdea()
-  }
-})
-</script>
-
+            for (let i = 0; i < credits.length; i++) {
+                let c = parseFloat(credits[i].value);
+                let g = parseFloat(grades[i].value);
+                if (!isNaN(c) && !isNaN(g)) {
+                    totalPoints += (c * g);
+                    totalCredits += c;
+                }
+            }
+            const finalGPA = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0.00;
+            document.getElementById('gpaResult').innerText = "Overall GPA: " + finalGPA;
+        }
+    </script>
 </body>
 </html>
