@@ -21,6 +21,13 @@ body {
   background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
   background-size: 400% 400%;
   animation: gradientMove 12s infinite;
+  transition: background 0.3s;
+}
+
+body.dark-mode {
+  background: linear-gradient(-45deg, #1a1a1a, #2d2d2d, #1f1f1f, #2a2a2a);
+  background-size: 400% 400%;
+  animation: gradientMove 12s infinite;
 }
 
 @keyframes gradientMove {
@@ -38,6 +45,11 @@ body {
   backdrop-filter: blur(10px);
   padding: 15px 40px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s;
+}
+
+.navbar.dark-mode {
+  background: rgba(30, 30, 30, 0.5);
 }
 
 .navbar h2 {
@@ -48,6 +60,7 @@ body {
 .nav-links {
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
 .nav-links a {
@@ -64,6 +77,51 @@ body {
 .nav-links a:hover {
   background: #5b86e5;
   color: white;
+}
+
+.navbar.dark-mode .nav-links a {
+  color: white;
+  background: #333;
+}
+
+.navbar.dark-mode .nav-links a:hover {
+  background: #5b86e5;
+  color: white;
+}
+
+/* DARK MODE TOGGLE */
+.toggle-checkbox {
+  display: none;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+  border-radius: 20px;
+  padding: 4px 6px;
+  transition: 0.3s;
+  width: 50px;
+  height: 28px;
+  position: relative;
+}
+
+.toggle-label::after {
+  content: '☀️';
+  position: absolute;
+  left: 6px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background: #333;
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+  content: '🌙';
+  left: 24px;
 }
 
 /* LAYOUT CONTAINER */
@@ -85,6 +143,12 @@ body {
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, color 0.3s;
+}
+
+.dark-mode .sidebar {
+  background: #2a2a2a;
+  color: #e0e0e0;
 }
 
 .sidebar h3 {
@@ -93,6 +157,11 @@ body {
   font-size: 18px;
   border-bottom: 2px solid #5b86e5;
   padding-bottom: 8px;
+  transition: color 0.3s;
+}
+
+.dark-mode .sidebar h3 {
+  color: #e0e0e0;
 }
 
 .event-item {
@@ -102,6 +171,12 @@ body {
   border-radius: 8px;
   font-size: 13px;
   border-left: 4px solid #36d1dc;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dark-mode .event-item {
+  background: #3a3a3a;
+  color: #e0e0e0;
 }
 
 .event-date {
@@ -141,6 +216,12 @@ body {
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s, color 0.3s;
+}
+
+.dark-mode .board {
+  background: #2a2a2a;
+  color: #e0e0e0;
 }
 
 /* COUNTER */
@@ -149,6 +230,11 @@ body {
   font-weight: bold;
   margin-bottom: 15px;
   color: #444;
+  transition: color 0.3s;
+}
+
+.dark-mode .counter {
+  color: #e0e0e0;
 }
 
 /* INPUT */
@@ -159,6 +245,13 @@ select, input {
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.dark-mode select, .dark-mode input {
+  background: #3a3a3a;
+  color: #e0e0e0;
+  border-color: #555;
 }
 
 /* BUTTONS */
@@ -206,6 +299,12 @@ li {
   display: flex;
   flex-direction: column;
   animation: fadeIn 0.4s;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dark-mode li {
+  background: #3a3a3a;
+  color: #e0e0e0;
 }
 
 @keyframes fadeIn {
@@ -227,6 +326,11 @@ li {
   font-size: 13px;
   color: #666;
   font-style: italic;
+  transition: color 0.3s;
+}
+
+.dark-mode .idea-author {
+  color: #aaa;
 }
 
 .actions {
@@ -243,6 +347,11 @@ li {
 .delete {
   color: #555;
   cursor: pointer;
+  transition: color 0.3s;
+}
+
+.dark-mode .delete {
+  color: #aaa;
 }
 
 /* FOOTER */
@@ -264,6 +373,8 @@ li {
     <a href="Day4.html">Idea Board</a>
     <a href="gpacal.html">GPA Calculator</a>
     <a href="Pomodoro_timer.html">Study Timer</a>
+    <input type="checkbox" id="darkModeToggle" class="toggle-checkbox">
+    <label for="darkModeToggle" class="toggle-label"></label>
   </div>
 </nav>
 
@@ -323,6 +434,31 @@ li {
 </div>
 
 <script>
+/* Dark Mode Toggle */
+const darkModeToggle = document.getElementById('darkModeToggle');
+const body = document.body;
+const navbar = document.querySelector('.navbar');
+
+// Check if dark mode preference is saved
+if (localStorage.getItem('darkMode') === 'enabled') {
+  darkModeToggle.checked = true;
+  body.classList.add('dark-mode');
+  navbar.classList.add('dark-mode');
+}
+
+// Toggle dark mode on checkbox change
+darkModeToggle.addEventListener('change', function() {
+  if (this.checked) {
+    body.classList.add('dark-mode');
+    navbar.classList.add('dark-mode');
+    localStorage.setItem('darkMode', 'enabled');
+  } else {
+    body.classList.remove('dark-mode');
+    navbar.classList.remove('dark-mode');
+    localStorage.setItem('darkMode', 'disabled');
+  }
+});
+
 /* ADD IDEA */
 function addIdea(){
   const name=document.getElementById("nameSelect").value
