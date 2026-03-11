@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creative Group Idea Board</title>
+<title>UCSC Student Dashboard</title>
 <style>
+/* =========================================
+   GLOBAL & THEME STYLES
+========================================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,12 +15,11 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* BACKGROUND & THEME */
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f4f5f7; /* Clean light background */
+  background: #f4f5f7;
   transition: background 0.3s;
 }
 
@@ -30,17 +32,16 @@ body.dark-mode {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #800000; /* UCSC Maroon */
+  background: #800000;
   padding: 15px 40px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: background 0.3s;
 }
 
 .navbar.dark-mode {
-  background: #4a0000; /* Darker Maroon for dark mode */
+  background: #4a0000;
 }
 
-/* UCSC LOGO PLACEHOLDER */
 .navbar-brand {
   display: flex;
   align-items: center;
@@ -50,7 +51,7 @@ body.dark-mode {
 .logo-placeholder {
   width: 45px;
   height: 45px;
-  background: #FFD700; /* UCSC Gold */
+  background: #FFD700;
   color: #800000;
   border-radius: 50%;
   display: flex;
@@ -81,10 +82,11 @@ body.dark-mode {
   font-weight: bold;
   font-size: 14px;
   transition: 0.3s;
+  cursor: pointer;
 }
 
 .nav-links a:hover {
-  background: #FFD700; /* UCSC Gold on hover */
+  background: #FFD700;
   color: #800000;
 }
 
@@ -122,7 +124,9 @@ body.dark-mode {
 .toggle-checkbox:checked + .toggle-label { background: #333; }
 .toggle-checkbox:checked + .toggle-label::after { content: '🌙'; left: 24px; }
 
-/* LAYOUT CONTAINER */
+/* =========================================
+   LAYOUT & ANIMATIONS
+========================================= */
 .layout-container {
   display: flex;
   flex: 1;
@@ -134,17 +138,36 @@ body.dark-mode {
   align-items: flex-start;
 }
 
-/* SECTION ANIMATIONS (Fade-in) */
 .sidebar, .main-content {
   animation: sectionFadeIn 0.8s ease-out forwards;
   opacity: 0; 
 }
+
 @keyframes sectionFadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* SIDEBAR */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SPA VIEW SECTIONS */
+.view-section {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+.view-section.active {
+  display: flex;
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
 .sidebar {
   background: white;
   width: 250px;
@@ -152,7 +175,7 @@ body.dark-mode {
   border-radius: 15px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   transition: background 0.3s, color 0.3s;
-  border-top: 4px solid #FFD700; /* Gold accent */
+  border-top: 4px solid #FFD700;
 }
 
 .dark-mode .sidebar {
@@ -172,14 +195,13 @@ body.dark-mode {
 
 .dark-mode .sidebar h3 { color: #FFD700; }
 
-/* INTERACTIVE SIDEBAR EVENTS */
 .event-item {
   background: #f9f9f9;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 8px;
   font-size: 13px;
-  border-left: 4px solid #800000; /* Maroon edge */
+  border-left: 4px solid #800000;
   transition: transform 0.3s, box-shadow 0.3s, background 0.3s, color 0.3s;
 }
 
@@ -189,10 +211,9 @@ body.dark-mode {
   color: #e0e0e0;
 }
 
-/* Hover Effect: Glow and Expand */
 .event-item:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.7); /* Gold glow */
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.7);
   cursor: pointer;
 }
 
@@ -204,13 +225,15 @@ body.dark-mode {
 }
 .dark-mode .event-date { color: #FFD700; }
 
-/* MAIN CONTENT */
+/* =========================================
+   MAIN CONTENT & BOARDS
+========================================= */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation-delay: 0.2s; /* Slightly delayed for cascading effect */
+  animation-delay: 0.2s;
 }
 
 .header { text-align: center; color: #333; margin-bottom: 20px; }
@@ -218,7 +241,6 @@ body.dark-mode {
 .header h1 { font-size: 36px; color: #800000; }
 .dark-mode .header h1 { color: #FFD700; }
 
-/* BOARD */
 .board {
   background: white;
   width: 100%;
@@ -257,10 +279,18 @@ button {
 .add-btn { background: #800000; color: white; }
 .add-btn:hover { background: #FFD700; color: #800000; transform: scale(1.03); }
 
+/* General Clear Button */
 .clear-btn { background: #666; color: white; }
 .clear-btn:hover { background: #444; }
 
-/* IDEA LIST */
+/* Timer Specific Clear Button */
+.timer-clear-btn { background: white; border: 2px solid #800000; color: #800000; }
+.timer-clear-btn:hover { background: #f0f0f0; }
+.dark-mode .timer-clear-btn { border-color:#FFD700; color:#FFD700; background: transparent;}
+
+/* =========================================
+   FEATURE 1: IDEA BOARD STYLES
+========================================= */
 ul { list-style: none; margin-top: 20px; }
 li {
   background: #f9f9f9;
@@ -275,11 +305,6 @@ li {
 }
 .dark-mode li { background: #3a3a3a; color: #e0e0e0; border-left: 5px solid #FFD700; }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .idea-row { display: flex; justify-content: space-between; align-items: center; }
 .idea-text { font-weight: 600; }
 .idea-author { font-size: 13px; color: #666; font-style: italic; transition: color 0.3s; }
@@ -289,6 +314,20 @@ li {
 .dark-mode .like { color: #FFD700; }
 .delete { color: #555; cursor: pointer; transition: color 0.3s; }
 .dark-mode .delete { color: #aaa; }
+
+/* =========================================
+   FEATURE 2: GPA CALCULATOR STYLES
+========================================= */
+.gpa-row { display: flex; gap: 10px; margin-bottom: 10px; }
+#gpaResult { font-size: 24px; color: #800000; margin-top: 20px; text-align: center; font-weight: bold; }
+.dark-mode #gpaResult { color: #FFD700; }
+
+/* =========================================
+   FEATURE 3: TIMER STYLES
+========================================= */
+.timer-display { font-size: 72px; text-align: center; margin: 20px 0; color: #800000; font-weight: bold; font-family: monospace;}
+.dark-mode .timer-display { color: #FFD700; }
+.timer-btns { display: flex; gap: 10px; }
 
 /* FOOTER */
 .footer { padding: 20px; color: #666; font-size: 14px; text-align: center; width: 100%; }
@@ -304,15 +343,16 @@ li {
     <h2>Student Dashboard</h2>
   </div>
   <div class="nav-links">
-    <a href="Day4.html">Idea Board</a>
-    <a href="gpacal.html">GPA Calculator</a>
-    <a href="Pomodoro_timer.html">Study Timer</a>
+    <a onclick="switchView('idea')">Idea Board</a>
+    <a onclick="switchView('gpa')">GPA Calculator</a>
+    <a onclick="switchView('timer')">Study Timer</a>
     <input type="checkbox" id="darkModeToggle" class="toggle-checkbox">
     <label for="darkModeToggle" class="toggle-label"></label>
   </div>
 </nav>
 
 <div class="layout-container">
+  
   <aside class="sidebar">
     <h3>Upcoming Events</h3>
     <div class="event-item">
@@ -330,33 +370,69 @@ li {
   </aside>
 
   <main class="main-content">
-    <div class="header">
-      <h1>💡 Creative Idea Board</h1>
-      <p>Share your ideas with the team</p>
+      
+    <div id="view-idea" class="view-section active">
+        <div class="header">
+          <h1>💡 Creative Idea Board</h1>
+          <p>Share your ideas with the team</p>
+        </div>
+
+        <div class="board">
+          <div class="counter" style="text-align:center; font-weight:bold; margin-bottom:15px;">
+            Total Ideas: <span id="ideaCount">0</span>
+          </div>
+
+          <select id="nameSelect">
+            <option>Arosha</option>
+            <option>Pabath</option>
+            <option>Amiru</option>
+            <option>Naveen</option>
+            <option>Kaveesha</option>
+            <option>Ruwini</option>
+            <option>Tanisha</option>
+            <option>Sithumini</option>
+            <option>Thiseni</option>
+          </select>
+
+          <input type="text" id="ideaInput" placeholder="Enter your idea here...">
+          <button class="add-btn" onclick="addIdea()">+ Add Idea</button>
+          <button class="clear-btn" onclick="clearInput()">Clear</button>
+          <ul id="ideaList"></ul>
+        </div>
     </div>
 
-    <div class="board">
-      <div class="counter" style="text-align:center; font-weight:bold; margin-bottom:15px;">
-        Total Ideas: <span id="ideaCount">0</span>
-      </div>
-
-      <select id="nameSelect">
-        <option>Arosha</option>
-        <option>Pabath</option>
-        <option>Amiru</option>
-        <option>Naveen</option>
-        <option>Kaveesha</option>
-        <option>Ruwini</option>
-        <option>Tanisha</option>
-        <option>Sithumini</option>
-        <option>Thiseni</option>
-      </select>
-
-      <input type="text" id="ideaInput" placeholder="Enter your idea here...">
-      <button class="add-btn" onclick="addIdea()">+ Add Idea</button>
-      <button class="clear-btn" onclick="clearInput()">Clear</button>
-      <ul id="ideaList"></ul>
+    <div id="view-gpa" class="view-section">
+        <div class="header">
+            <h1>📊 GPA Calculator</h1>
+            <p>Calculate your semester standing</p>
+        </div>
+        <div class="board">
+            <div id="courseInputs">
+                <div class="gpa-row">
+                    <input type="number" class="credits" placeholder="Credits (e.g. 3)">
+                    <input type="number" class="grade" placeholder="Grade (0-4.0)">
+                </div>
+            </div>
+            <button class="add-btn" onclick="addRow()">+ Add Course</button>
+            <button class="add-btn" style="background:#FFD700; color:#800000;" onclick="calculateGPA()">Calculate GPA</button>
+            <div id="gpaResult">GPA: --</div>
+        </div>
     </div>
+
+    <div id="view-timer" class="view-section">
+        <div class="header">
+            <h1>⏱️ Pomodoro Timer</h1>
+            <p>Stay focused and productive</p>
+        </div>
+        <div class="board">
+            <div class="timer-display" id="display">25:00</div>
+            <div class="timer-btns">
+                <button class="add-btn" onclick="startTimer()">Start</button>
+                <button class="timer-clear-btn" onclick="resetTimer()">Reset</button>
+            </div>
+        </div>
+    </div>
+
   </main>
 </div>
 
@@ -365,7 +441,17 @@ li {
 </div>
 
 <script>
-/* Dark Mode Toggle */
+/* --- NAVIGATION TAB LOGIC --- */
+function switchView(viewName) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.view-section');
+    sections.forEach(sec => sec.classList.remove('active'));
+    
+    // Show the target section
+    document.getElementById('view-' + viewName).classList.add('active');
+}
+
+/* --- DARK MODE TOGGLE --- */
 const darkModeToggle = document.getElementById('darkModeToggle');
 const body = document.body;
 const navbar = document.querySelector('.navbar');
@@ -388,7 +474,7 @@ darkModeToggle.addEventListener('change', function() {
   }
 });
 
-/* ADD IDEA */
+/* --- IDEA BOARD LOGIC --- */
 function addIdea(){
   const name=document.getElementById("nameSelect").value
   const idea=document.getElementById("ideaInput").value.trim()
@@ -431,6 +517,62 @@ function updateCounter(){
 document.getElementById("ideaInput").addEventListener("keypress",function(e){
   if(e.key==="Enter"){ addIdea() }
 })
+
+/* --- GPA CALCULATOR LOGIC --- */
+function addRow() {
+    const div = document.createElement('div');
+    div.className = 'gpa-row';
+    div.innerHTML = `<input type="number" class="credits" placeholder="Credits"><input type="number" class="grade" placeholder="Grade">`;
+    document.getElementById('courseInputs').appendChild(div);
+}
+
+function calculateGPA() {
+    const credits = document.querySelectorAll('.credits');
+    const grades = document.querySelectorAll('.grade');
+    let totalPoints = 0;
+    let totalCredits = 0;
+
+    for (let i = 0; i < credits.length; i++) {
+        let c = parseFloat(credits[i].value);
+        let g = parseFloat(grades[i].value);
+        if (!isNaN(c) && !isNaN(g)) {
+            totalPoints += (c * g);
+            totalCredits += c;
+        }
+    }
+    const finalGPA = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0.00;
+    document.getElementById('gpaResult').innerText = "Overall GPA: " + finalGPA;
+}
+
+/* --- STUDY TIMER LOGIC --- */
+let timeLeft = 25 * 60;
+let timerInterval;
+
+function updateDisplay() {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    document.getElementById('display').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function startTimer() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert("Time's up! Take a break. 🔔");
+        }
+    }, 1000);
+}
+
+function resetTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timeLeft = 25 * 60;
+    updateDisplay();
+}
 </script>
 </body>
 </html>
