@@ -100,6 +100,12 @@ body.dark-mode {
   color: #800000;
 }
 
+/* Active menu highlight */
+.nav-links a.active {
+  background: #FFD700;
+  color: #800000;
+}
+
 /* DARK MODE TOGGLE */
 .toggle-checkbox { display: none; }
 .toggle-label {
@@ -296,7 +302,6 @@ li {
   background: #f9f9f9;
   padding: 14px;
   margin-bottom: 10px;
-  border-radius: 10px;
   border-left: 5px solid #800000;
   display: flex;
   flex-direction: column;
@@ -463,6 +468,10 @@ function switchView(viewName) {
     const sections = document.querySelectorAll('.view-section');
     sections.forEach(sec => sec.classList.remove('active'));
     document.getElementById('view-' + viewName).classList.add('active');
+
+    // Highlight active menu
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.querySelector(`.nav-links a[onclick="switchView('${viewName}')"]`).classList.add('active');
 }
 
 /* --- DARK MODE TOGGLE --- */
@@ -540,8 +549,10 @@ function addIdea(){
   updateCounter();
 }
 
+/* --- CLEAR INPUT --- */
 function clearInput(){ document.getElementById("ideaInput").value="" }
 
+/* --- LIKE / DELETE --- */
 function likeIdea(el){
   let parts = el.innerText.split(" ");
   let number = parseInt(parts[1]);
@@ -554,11 +565,13 @@ function deleteIdea(el){
   updateCounter();
 }
 
+/* --- COUNTER --- */
 function updateCounter(){
   let total = document.querySelectorAll("#ideaList li").length;
   document.getElementById("ideaCount").innerText = total;
 }
 
+/* --- ENTER KEY ADD --- */
 document.getElementById("ideaInput").addEventListener("keypress",function(e){
   if(e.key === "Enter"){ addIdea() }
 })
@@ -617,6 +630,75 @@ function resetTimer() {
     timerInterval = null;
     timeLeft = 25 * 60;
     updateDisplay();
+}
+
+/* --- PERSIST IDEA BOARD DATA --- */
+function saveIdeas() {
+    const ideas = [];
+    document.querySelectorAll("#ideaList li").forEach(li => {
+        ideas.push({
+            text: li.querySelector('.idea-text').innerText,
+            author: li.querySelector('.idea-author').innerText,
+            likes: parseInt(li.querySelector('.like').innerText.split(" ")[1])
+        });
+    });
+    localStorage.setItem("ideas", JSON.stringify(ideas));
+}
+
+function loadIdeas() {
+    const ideas = JSON.parse(localStorage.getItem("ideas") || "[]");
+    const list = document.getElementById("ideaList");
+    ideas.forEach(idea => {
+        const li = document.createElement("li");
+
+        const rowDiv = document.createElement("div");
+        rowDiv.className = "idea-row";
+
+        const ideaSpan = document.createElement("span");
+        ideaSpan.className = "idea-text";
+        ideaSpan.textContent = idea.text;
+
+        const authorSpan = document.createElement("span");
+        authorSpan.className = "idea-author";
+        authorSpan.textContent = idea.author;
+
+        rowDiv.appendChild(ideaSpan);
+        rowDiv.appendChild(authorSpan);
+
+        const actionsDiv = document.createElement("div");
+        actionsDiv.className = "actions";
+        actionsDiv.innerHTML = `
+            <span class="like" onclick="likeIdea(this)">❤️ ${idea.likes}</span>
+            <span class="delete" onclick="deleteIdea(this)">🗑 Delete</span>
+        `;
+
+        li.appendChild(rowDiv);
+        li.appendChild(actionsDiv);
+        list.appendChild(li);
+    });
+    updateCounter();
+}
+
+// Load ideas on page load
+loadIdeas();
+
+// Wrap existing functions to auto-save
+const originalAddIdea = addIdea;
+addIdea = function() {
+    originalAddIdea();
+    saveIdeas();
+}
+
+const originalDeleteIdea = deleteIdea;
+deleteIdea = function(el) {
+    originalDeleteIdea(el);
+    saveIdeas();
+}
+
+const originalLikeIdea = likeIdea;
+likeIdea = function(el) {
+    originalLikeIdea(el);
+    saveIdeas();
 }
 </script>
 </body>
