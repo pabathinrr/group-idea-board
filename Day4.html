@@ -291,7 +291,7 @@ button {
 /* =========================================
    FEATURE 1: IDEA BOARD STYLES
 ========================================= */
-ul { list-style: none; margin-top: 20px; }
+ul { list-style: none; margin-top: 20px; width: 100%; }
 li {
   background: #f9f9f9;
   padding: 14px;
@@ -302,12 +302,28 @@ li {
   flex-direction: column;
   animation: fadeIn 0.4s;
   transition: background 0.3s, color 0.3s;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .dark-mode li { background: #3a3a3a; color: #e0e0e0; border-left: 5px solid #FFD700; }
 
-.idea-row { display: flex; justify-content: space-between; align-items: center; }
-.idea-text { font-weight: 600; }
-.idea-author { font-size: 13px; color: #666; font-style: italic; transition: color 0.3s; }
+.idea-row { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-start; 
+  gap: 10px;
+}
+.idea-text { 
+  font-weight: 600; 
+  flex: 1; 
+}
+.idea-author { 
+  font-size: 11px; 
+  color: #666; 
+  font-style: italic; 
+  white-space: nowrap; 
+  margin-top: 3px;
+}
 .dark-mode .idea-author { color: #aaa; }
 .actions { margin-top: 8px; display: flex; justify-content: space-between; }
 .like { color: #800000; cursor: pointer; }
@@ -394,7 +410,8 @@ li {
             <option>Thiseni</option>
           </select>
 
-          <input type="text" id="ideaInput" placeholder="Enter your idea here...">
+          <input type="text" id="ideaInput" placeholder="Enter your idea here (max 500 chars)..." maxlength="500">
+          
           <button class="add-btn" onclick="addIdea()">+ Add Idea</button>
           <button class="clear-btn" onclick="clearInput()">Clear</button>
           <ul id="ideaList"></ul>
@@ -443,11 +460,8 @@ li {
 <script>
 /* --- NAVIGATION TAB LOGIC --- */
 function switchView(viewName) {
-    // Hide all sections
     const sections = document.querySelectorAll('.view-section');
     sections.forEach(sec => sec.classList.remove('active'));
-    
-    // Show the target section
     document.getElementById('view-' + viewName).classList.add('active');
 }
 
@@ -476,46 +490,77 @@ darkModeToggle.addEventListener('change', function() {
 
 /* --- IDEA BOARD LOGIC --- */
 function addIdea(){
-  const name=document.getElementById("nameSelect").value
-  const idea=document.getElementById("ideaInput").value.trim()
-  const list=document.getElementById("ideaList")
-  if(idea===""){ alert("Please enter an idea"); return; }
+  const name = document.getElementById("nameSelect").value;
+  const idea = document.getElementById("ideaInput").value.trim();
+  const list = document.getElementById("ideaList");
+  
+  if(idea === ""){ 
+    alert("Please enter an idea"); 
+    return; 
+  }
 
-  const li=document.createElement("li")
-  li.innerHTML=`
-  <div class="idea-row">
-    <span class="idea-text">${idea}</span>
-    <span class="idea-author">– ${name}</span>
-  </div>
-  <div class="actions">
+  // Check for duplicates
+  const existingIdeas = document.querySelectorAll('.idea-text');
+  for (let i = 0; i < existingIdeas.length; i++) {
+    if (existingIdeas[i].textContent.toLowerCase() === idea.toLowerCase()) {
+      alert("This idea already exists!");
+      return; 
+    }
+  }
+
+  // CREATE ELEMENTS MANUALLY TO PREVENT XSS
+  const li = document.createElement("li");
+  
+  const rowDiv = document.createElement("div");
+  rowDiv.className = "idea-row";
+  
+  const ideaSpan = document.createElement("span");
+  ideaSpan.className = "idea-text";
+  ideaSpan.textContent = idea; // Safely set text
+  
+  const authorSpan = document.createElement("span");
+  authorSpan.className = "idea-author";
+  authorSpan.textContent = "– " + name; // Safely set text
+
+  rowDiv.appendChild(ideaSpan);
+  rowDiv.appendChild(authorSpan);
+
+  const actionsDiv = document.createElement("div");
+  actionsDiv.className = "actions";
+  actionsDiv.innerHTML = `
     <span class="like" onclick="likeIdea(this)">❤️ 0</span>
     <span class="delete" onclick="deleteIdea(this)">🗑 Delete</span>
-  </div>`
-  list.appendChild(li)
-  document.getElementById("ideaInput").value=""
-  updateCounter()
+  `;
+
+  li.appendChild(rowDiv);
+  li.appendChild(actionsDiv);
+  
+  list.appendChild(li);
+  document.getElementById("ideaInput").value = "";
+  updateCounter();
 }
 
 function clearInput(){ document.getElementById("ideaInput").value="" }
 
 function likeIdea(el){
-  let number=parseInt(el.innerText.split(" ")[1])
-  number++
-  el.innerText="❤️ "+number
+  let parts = el.innerText.split(" ");
+  let number = parseInt(parts[1]);
+  number++;
+  el.innerText = "❤️ " + number;
 }
 
 function deleteIdea(el){
-  el.parentElement.parentElement.remove()
-  updateCounter()
+  el.closest("li").remove();
+  updateCounter();
 }
 
 function updateCounter(){
-  let total=document.querySelectorAll("#ideaList li").length
-  document.getElementById("ideaCount").innerText=total
+  let total = document.querySelectorAll("#ideaList li").length;
+  document.getElementById("ideaCount").innerText = total;
 }
 
 document.getElementById("ideaInput").addEventListener("keypress",function(e){
-  if(e.key==="Enter"){ addIdea() }
+  if(e.key === "Enter"){ addIdea() }
 })
 
 /* --- GPA CALCULATOR LOGIC --- */
